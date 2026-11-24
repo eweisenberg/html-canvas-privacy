@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Canvas Fingerprinting Testing</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>HTML Canvas Fingerprinting Testing</h1>
+    <div class="system-info">
+      <span id="badgeGpu">GPU: Detecting...</span>
+    </div>
+  </header>
+
+  <div class="dashboard-grid">
+    <!-- Left Column: Scene & Live Canvas -->
+    <div class="col-left">
+      <!-- Section 1: Scene & Baseline -->
+      <div class="section">
+        <div class="section-title">1. Test Scene and Baseline</div>
+        
+        <div class="form-group">
+          <label for="sceneSelect">Preset Scene</label>
+          <select id="sceneSelect">
+            <option value="minimal" selected>Stage 1: Minimal Glyph and Polygon (A + Triangle)</option>
+            <option value="geometry">Stage 2: Subpixel Geometry and Gradients (Bezier and Curves)</option>
+            <option value="full">Stage 3: Full Composite Fingerprint (Multi-Font)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="baselineSelect">Saved Reference Baseline</label>
+          <div class="form-row">
+            <select id="baselineSelect" style="flex: 1;">
+              <option value="none">-- Select a Saved Run --</option>
+            </select>
+            <button id="btnRefreshBaselines" type="button">Refresh</button>
+            <button id="btnLoadBaseline" type="button">Load</button>
+          </div>
+          <div id="baselineStatus" class="mono"></div>
+        </div>
+
+        <label>Live Render (<span id="canvasDims">200x150</span>)</label>
+        <div class="canvas-container">
+          <canvas id="liveCanvas" width="200" height="150"></canvas>
+        </div>
+
+        <div class="button-row">
+          <button id="btnSnapshot" type="button">Re-render Scene</button>
+          <button id="btnSetBaseline" type="button">Set Current Tab as Baseline</button>
+          <button id="btnResetBaseline" type="button">Clear</button>
+        </div>
+      </div>
+
+      <!-- Section 2: Metadata & Upload -->
+      <div class="section">
+        <div class="section-title">2. Dataset Tagging and Telemetry</div>
+        
+        <div class="form-row">
+          <div style="flex: 1;">
+            <label for="inputMachine">Machine ID</label>
+            <input type="text" id="inputMachine" value="machine-1">
+          </div>
+          <div style="flex: 1;">
+            <label for="inputBrowser">Browser</label>
+            <input type="text" id="inputBrowser" value="chrome">
+          </div>
+          <div style="flex: 1;">
+            <label for="inputMode">Mode</label>
+            <select id="inputMode">
+              <option value="normal" selected>Normal</option>
+              <option value="private">Private</option>
+              <option value="strict">Strict</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top: 8px;">
+          <button id="btnUpload" type="button" style="width: 100%;">Save Snapshot to Dataset (/data/runs/)</button>
+        </div>
+        <div id="uploadStatus" class="mono" style="margin-top: 4px;"></div>
+      </div>
+    </div>
+
+    <!-- Right Column: Heatmap, Inversion, Stats -->
+    <div class="col-right">
+      <!-- Section 3: Difference Heatmap & Pixel Inspector -->
+      <div class="section">
+        <div class="section-title">3. Amplified Difference Heatmap</div>
+        <div class="legend">
+          Scale: Black = 0 delta | Cyan = +/-1 | Yellow = +/-2 | Red/Pink = +/-3+
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="diffCanvas" width="200" height="150"></canvas>
+        </div>
+
+        <div class="form-group">
+          <label for="ampSlider">Heatmap Gain Amplification</label>
+          <div class="slider-row">
+            <input type="range" id="ampSlider" min="1" max="100" value="50">
+            <span id="ampSliderVal" class="mono">50x</span>
+          </div>
+        </div>
+
+        <div class="inspector-data">
+          <div><strong>Pixel Inspector (Hover/Click Canvas):</strong></div>
+          <div>Coordinate: <span id="inspectorCoord">(--, --)</span></div>
+          <div>Current RGBA: <span id="inspectorCur">--</span></div>
+          <div>Baseline RGBA: <span id="inspectorBase">--</span></div>
+          <div>Delta: <span id="inspectorDelta">--</span></div>
+        </div>
+      </div>
+
+      <!-- Section 4: LSB Quantization & Hash Comparison -->
+      <div class="section">
+        <div class="section-title">
+          4. LSB Quantization Inversion
+          <span id="badgeQuantMatch" class="status-tag">NO BASELINE</span>
+        </div>
+
+        <div class="form-group">
+          <label for="lsbSlider">Masked Low Bits (k)</label>
+          <div class="slider-row">
+            <input type="range" id="lsbSlider" min="0" max="6" value="0" step="1">
+            <span id="lsbSliderVal" class="mono">0 bits (255)</span>
+          </div>
+        </div>
+
+        <div class="hash-box">
+          <div class="hash-label">Quantized SHA-256 (Inversion):</div>
+          <div>Baseline: <span id="valBaselineQuant">-- (Set Baseline First)</span></div>
+          <div>Current:  <span id="valCurrentQuant">--</span></div>
+        </div>
+
+        <div class="hash-box">
+          <div class="hash-label">
+            Raw SHA-256:
+            <span id="badgeRawMatch" class="status-tag">NO BASELINE</span>
+          </div>
+          <div>Baseline: <span id="valBaselineRaw">-- (Set Baseline First)</span></div>
+          <div>Current:  <span id="valCurrentRaw">--</span></div>
+        </div>
+
+        <div class="section-title" style="margin-top: 12px;">Noise Statistics vs. Baseline</div>
+        <table>
+          <tbody>
+            <tr>
+              <td>Altered Pixels Count</td>
+              <td id="statAlteredCount">--</td>
+            </tr>
+            <tr>
+              <td>Canvas Modified %</td>
+              <td id="statAlteredPct">--</td>
+            </tr>
+            <tr>
+              <td>Max Delta Magnitude</td>
+              <td id="statMaxDelta">--</td>
+            </tr>
+            <tr>
+              <td>Mean Channel Delta (R, G, B)</td>
+              <td id="statMeanDelta">--</td>
+            </tr>
+            <tr>
+              <td>Histogram (0 / +/-1 / +/-2 / +/-3+)</td>
+              <td>
+                <span id="statHist0">--</span> / 
+                <span id="statHist1">--</span> / 
+                <span id="statHist2">--</span> / 
+                <span id="statHist3">--</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/harness.js"></script>
+</body>
+</html>
