@@ -1,0 +1,21 @@
+{
+  "id": "1795530143991_machine-1_brave_private_minimal",
+  "timestamp": 1795530143991,
+  "date": "2026-11-24 09:22:23",
+  "machine": "machine-1",
+  "browser": "brave",
+  "mode": "private",
+  "scene": "minimal",
+  "width": 200,
+  "height": 150,
+  "raw_hash": "de1b9ab9dcb5af08687f9f78eec06a8a6c1bf0e695b917a2f776041da6c1776e",
+  "quantized_hash_1bit": "5bef85db91790594d9fd87e056ff0dae8da035f7b3c0f0b389082391394c1a48",
+  "quantized_hash_2bit": "63a9b3e032bf3619b53ca1c021e34e531c456aa0ab174c66d5def294188d833f",
+  "webgl_vendor": "Brave",
+  "webgl_renderer": "Brave",
+  "dpr": 1.5,
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36",
+  "bin_file": "1795530143991_machine-1_brave_private_minimal.bin",
+  "npz_file": "1795530143991_machine-1_brave_private_minimal.npz",
+  "byte_size": 120000
+}

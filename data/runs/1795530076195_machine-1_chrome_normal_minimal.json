@@ -1,0 +1,21 @@
+{
+  "id": "1795530076195_machine-1_chrome_normal_minimal",
+  "timestamp": 1795530076195,
+  "date": "2026-11-24 09:21:16",
+  "machine": "machine-1",
+  "browser": "chrome",
+  "mode": "normal",
+  "scene": "minimal",
+  "width": 200,
+  "height": 150,
+  "raw_hash": "7c76dea578b43f0a7a33fda12de77304b5e2a8688c742528b51222edaed034fe",
+  "quantized_hash_1bit": "5bef85db91790594d9fd87e056ff0dae8da035f7b3c0f0b389082391394c1a48",
+  "quantized_hash_2bit": "63a9b3e032bf3619b53ca1c021e34e531c456aa0ab174c66d5def294188d833f",
+  "webgl_vendor": "Google Inc. (AMD)",
+  "webgl_renderer": "ANGLE (AMD, AMD RadeonT 680M (0x00001681) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "dpr": 1.5,
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36",
+  "bin_file": "1795530076195_machine-1_chrome_normal_minimal.bin",
+  "npz_file": "1795530076195_machine-1_chrome_normal_minimal.npz",
+  "byte_size": 120000
+}
